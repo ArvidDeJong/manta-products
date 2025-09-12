@@ -15,6 +15,10 @@ return new class extends Migration {
             $table->json('config')->nullable();
             $table->smallInteger('sort')->default(0);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
         Schema::create('manta_attribute_values', function (Blueprint $table) {
@@ -25,8 +29,11 @@ return new class extends Migration {
             $table->string('hex')->nullable(); // #ff0000 for color
             $table->smallInteger('sort')->default(0);
             $table->timestamps();
-
-            $table->unique(['attribute_id','code']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->unique(['attribute_id', 'code']);
         });
 
         // manta_product_attributes table will be created in a separate migration after products table

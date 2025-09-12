@@ -26,8 +26,11 @@ return new class extends Migration {
             $table->timestamp('paid_at')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->index(['room_id','starts_at','ends_at']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['room_id', 'starts_at', 'ends_at']);
             $table->index(['status']);
         });
 
@@ -48,8 +51,11 @@ return new class extends Migration {
             $table->timestamp('ends_at');
             $table->json('price_breakdown')->nullable();
             $table->timestamps();
-
-            $table->index(['product_id','starts_at','ends_at']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['product_id', 'starts_at', 'ends_at']);
         });
 
         Schema::create('manta_holds', function (Blueprint $table) {
@@ -62,9 +68,12 @@ return new class extends Migration {
             $table->uuid('token')->unique();
             $table->timestamp('expires_at');
             $table->timestamps();
-
-            $table->index(['product_id','starts_at','ends_at']);
-            $table->index(['resource_id','starts_at','ends_at']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['product_id', 'starts_at', 'ends_at']);
+            $table->index(['resource_id', 'starts_at', 'ends_at']);
         });
     }
 

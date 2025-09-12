@@ -37,9 +37,12 @@ return new class extends Migration {
 
             $table->json('meta')->nullable();
             $table->timestamps();
-
-            $table->index(['active','product_type','unit_type']);
-            $table->index(['length_mm','width_mm','height_mm']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['active', 'product_type', 'unit_type']);
+            $table->index(['length_mm', 'width_mm', 'height_mm']);
         });
     }
 

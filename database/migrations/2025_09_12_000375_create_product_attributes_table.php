@@ -13,8 +13,11 @@ return new class extends Migration {
             $table->foreignId('attribute_id')->constrained('manta_attributes')->cascadeOnDelete();
             $table->boolean('is_required')->default(true);
             $table->smallInteger('sort')->default(0);
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
 
-            $table->unique(['product_id','attribute_id']);
+            $table->unique(['product_id', 'attribute_id']);
         });
     }
 

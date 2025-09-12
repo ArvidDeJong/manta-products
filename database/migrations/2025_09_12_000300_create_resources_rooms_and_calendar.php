@@ -15,8 +15,11 @@ return new class extends Migration {
             $table->string('location')->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();
-
-            $table->index(['active','capacity']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['active', 'capacity']);
         });
 
         Schema::create('manta_rooms', function (Blueprint $table) {
@@ -27,8 +30,11 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->json('meta')->nullable();
             $table->timestamps();
-
-            $table->index(['active','capacity']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['active', 'capacity']);
         });
 
         Schema::create('manta_opening_hours', function (Blueprint $table) {
@@ -38,8 +44,11 @@ return new class extends Migration {
             $table->tinyInteger('weekday'); // 1..7
             $table->time('start_time');
             $table->time('end_time');
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
             // no timestamps
-            $table->index(['owner_type','owner_id','weekday']);
+            $table->index(['owner_type', 'owner_id', 'weekday']);
         });
 
         Schema::create('manta_calendar_exceptions', function (Blueprint $table) {
@@ -52,8 +61,11 @@ return new class extends Migration {
             $table->time('end_time')->nullable();
             $table->string('note')->nullable();
             $table->timestamps();
-
-            $table->index(['owner_type','owner_id','date']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['owner_type', 'owner_id', 'date']);
         });
     }
 

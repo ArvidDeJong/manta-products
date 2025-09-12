@@ -4,12 +4,14 @@ namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Darvis\MantaProduct\Traits\HasDimensions;
 
 class ProductVariant extends Model
 {
     use HasFactory;
     use HasDimensions;
+    use SoftDeletes;
 
     protected $table = 'manta_product_variants';
 
