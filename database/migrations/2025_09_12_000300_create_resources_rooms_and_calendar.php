@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('manta_resources', function (Blueprint $table) {
             $table->id();
             $table->boolean('active')->default(true);
             $table->unsignedInteger('capacity')->default(1);
@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->index(['active','capacity']);
         });
 
-        Schema::create('rooms', function (Blueprint $table) {
+        Schema::create('manta_rooms', function (Blueprint $table) {
             $table->id();
             $table->boolean('active')->default(true);
             $table->unsignedInteger('capacity')->default(1);
@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->index(['active','capacity']);
         });
 
-        Schema::create('opening_hours', function (Blueprint $table) {
+        Schema::create('manta_opening_hours', function (Blueprint $table) {
             $table->id();
             $table->string('owner_type'); // products|resources|rooms
             $table->unsignedBigInteger('owner_id');
@@ -42,7 +42,7 @@ return new class extends Migration {
             $table->index(['owner_type','owner_id','weekday']);
         });
 
-        Schema::create('calendar_exceptions', function (Blueprint $table) {
+        Schema::create('manta_calendar_exceptions', function (Blueprint $table) {
             $table->id();
             $table->string('owner_type'); // products|resources|rooms
             $table->unsignedBigInteger('owner_id');
@@ -59,9 +59,9 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('calendar_exceptions');
-        Schema::dropIfExists('opening_hours');
-        Schema::dropIfExists('rooms');
-        Schema::dropIfExists('resources');
+        Schema::dropIfExists('manta_calendar_exceptions');
+        Schema::dropIfExists('manta_opening_hours');
+        Schema::dropIfExists('manta_rooms');
+        Schema::dropIfExists('manta_resources');
     }
 };

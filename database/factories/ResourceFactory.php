@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\Resource;
+use Darvis\MantaProduct\Models\Resource;
 
 class ResourceFactory extends Factory
 {

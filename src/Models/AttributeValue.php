@@ -1,6 +1,6 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class AttributeValue extends Model
 {
     use HasFactory;
-    protected $table = 'attribute_values';
+
+    protected $table = 'manta_attribute_values';
 
     protected $fillable = [
         'attribute_id',
@@ -25,10 +26,10 @@ class AttributeValue extends Model
     public function attribute()
     {
         return $this->belongsTo(Attribute::class);
-    
+    }
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\AttributeValueFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\AttributeValueFactory::new();
     }
 }

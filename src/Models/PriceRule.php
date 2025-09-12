@@ -1,6 +1,6 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PriceRule extends Model
 {
     use HasFactory;
-    protected $table = 'price_rules';
+
+    protected $table = 'manta_price_rules';
 
     protected $fillable = [
         'amount',
@@ -41,10 +42,10 @@ class PriceRule extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    
+    }
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\PriceRuleFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\PriceRuleFactory::new();
     }
 }

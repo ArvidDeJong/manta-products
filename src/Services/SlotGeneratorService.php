@@ -1,14 +1,14 @@
 <?php
 
-namespace Manta\Products\Services;
+namespace Darvis\MantaProduct\Services;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
-use Manta\Products\Models\OpeningHour;
-use Manta\Products\Models\CalendarException;
-use Manta\Products\Services\AvailabilityService;
-use Manta\Products\Models\Product;
+use Darvis\MantaProduct\Models\OpeningHour;
+use Darvis\MantaProduct\Models\CalendarException;
+use Darvis\MantaProduct\Services\AvailabilityService;
+use Darvis\MantaProduct\Models\Product;
 
 class SlotGeneratorService
 {

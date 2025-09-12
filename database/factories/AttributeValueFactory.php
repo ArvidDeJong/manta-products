@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\AttributeValue;
+use Darvis\MantaProduct\Models\AttributeValue;
 
 class AttributeValueFactory extends Factory
 {

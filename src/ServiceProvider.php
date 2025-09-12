@@ -1,6 +1,6 @@
 <?php
 
-namespace Manta\Products;
+namespace Darvis\MantaProduct;
 
 use Illuminate\Support\ServiceProvider as BaseProvider;
 
@@ -24,15 +24,7 @@ class ServiceProvider extends BaseProvider
         // Views (for demo)
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'manta-products');
 
-        // Routes (demo - optional)
-        if (config('manta-products.enable_demo', false)) {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/manta-products-demo.php');
-        }
 
-        // Publish demo stubs (controllers/livewire could be copied into app if desired)
-        $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/manta-products'),
-            __DIR__ . '/../routes/manta-products-demo.php' => base_path('routes/manta-products-demo.php'),
-        ], 'manta-products-demo');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 }

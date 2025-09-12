@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('manta_products', function (Blueprint $table) {
             $table->id();
             $table->boolean('active')->default(true);
             $table->unsignedInteger('capacity')->default(1);
             $table->unsignedInteger('block_size')->default(1);
             $table->string('product_type')->default('bookable'); // bookable|sellable|both
             $table->string('time_unit')->nullable(); // minute|day
-            $table->foreignId('resource_id')->nullable()->constrained('resources')->nullOnDelete();
+            $table->foreignId('resource_id')->nullable()->constrained('manta_resources')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
 
@@ -45,6 +45,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('manta_products');
     }
 };

@@ -1,6 +1,6 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Room extends Model
 {
     use HasFactory;
-    protected $table = 'rooms';
+
+    protected $table = 'manta_rooms';
 
     protected $fillable = [
         'active',
@@ -37,10 +38,10 @@ class Room extends Model
     public function exceptions()
     {
         return $this->morphMany(CalendarException::class, 'owner');
-    
+    }
 
-    protected static function newFactory()
+    public static function newFactory()
     {
-        return \Manta\Products\Database\Factories\RoomFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\RoomFactory::new();
     }
 }

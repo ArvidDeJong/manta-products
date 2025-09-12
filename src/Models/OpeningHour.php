@@ -1,6 +1,6 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class OpeningHour extends Model
 {
     use HasFactory;
-    protected $table = 'opening_hours';
+
+    protected $table = 'manta_opening_hours';
     public $timestamps = false;
 
     protected $fillable = [
@@ -26,10 +27,10 @@ class OpeningHour extends Model
     public function owner()
     {
         return $this->morphTo();
-    
+    }
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\OpeningHourFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\OpeningHourFactory::new();
     }
 }

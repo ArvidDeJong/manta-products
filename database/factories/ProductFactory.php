@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\Product;
+use Darvis\MantaProduct\Models\Product;
 use Illuminate\Support\Str;
 
 class ProductFactory extends Factory
@@ -12,23 +12,23 @@ class ProductFactory extends Factory
 
     public function definition()
     {
-        $title = $this->faker->words(3, true);
+        $title = 'Test Product ' . rand(1, 1000);
         return [
             'active'         => true,
-            'title'          => ucfirst($title),
-            'slug'           => Str::slug($title) . '-' . $this->faker->unique()->numberBetween(100,999),
-            'product_type'   => $this->faker->randomElement(['sellable','bookable','both']),
-            'time_unit'      => $this->faker->randomElement(['minute','day']),
-            'block_size'     => $this->faker->randomElement([15,30,60,1]),
-            'capacity'       => $this->faker->numberBetween(1, 8),
-            'unit_type'      => $this->faker->randomElement(['piece','meter','m2','m3']),
-            'price_per_unit' => $this->faker->randomFloat(2, 2, 99),
+            'title'          => $title,
+            'slug'           => Str::slug($title) . '-' . rand(100,999),
+            'product_type'   => 'sellable',
+            'time_unit'      => 'day',
+            'block_size'     => 30,
+            'capacity'       => 4,
+            'unit_type'      => 'm2',
+            'price_per_unit' => 10.50,
             'tax_rate'       => 21.00,
             'unit_step'      => 0.01,
-            'calc_mode'      => $this->faker->randomElement(['direct_length','dimensions_2d','dimensions_3d']),
-            'length_mm'      => $this->faker->numberBetween(500, 3000),
-            'width_mm'       => $this->faker->numberBetween(100, 1500),
-            'height_mm'      => $this->faker->numberBetween(10, 800),
+            'calc_mode'      => 'dimensions_2d',
+            'length_mm'      => 1000,
+            'width_mm'       => 500,
+            'height_mm'      => 100,
             'dimension_unit' => 'mm',
             'meta'           => [],
         ];

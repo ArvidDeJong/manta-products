@@ -1,22 +1,26 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Manta\Products\Traits\HasDimensions;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Darvis\MantaProduct\Traits\HasDimensions;
 
 class Product extends Model
 {
-    public function resource()
-    {
-        return $this->belongsTo(Resource::class);
-    }
-
     use HasFactory;
     use HasDimensions;
+    use SoftDeletes;
 
-    protected $table = 'products';
+    public function resources(): BelongsToMany
+    {
+        return $this->belongsToMany(\Darvis\MantaProduct\Models\Resource::class, 'product_resource');
+    }
+
+    protected $table = 'manta_products';
 
     protected $fillable = [
         'active',
@@ -48,26 +52,26 @@ class Product extends Model
         'active'        => 'bool',
         'capacity'      => 'int',
         'meta'          => 'array',
-        'price_per_unit'=> 'decimal:2',
+        'price_per_unit' => 'decimal:2',
         'tax_rate'      => 'decimal:2',
         'wastage_pct'   => 'decimal:2',
     ];
 
-    public function attributes()
+    public function attributes(): BelongsToMany
     {
-        return $this->belongsToMany(Attribute::class, 'product_attributes')
-            ->withPivot(['is_required','sort'])
-            ->orderBy('product_attributes.sort');
+        return $this->belongsToMany(\Darvis\MantaProduct\Models\Attribute::class, 'product_attributes')
+            ->withPivot('value', 'sort_order')
+            ->orderBy('pivot_sort_order');
     }
 
-    public function variants()
+    public function variants(): HasMany
     {
-        return $this->hasMany(ProductVariant::class);
+        return $this->hasMany(\Darvis\MantaProduct\Models\ProductVariant::class);
     }
 
     public function isSellable(): bool
     {
-        return in_array($this->product_type, ['sellable','both'], true);
+        return in_array($this->product_type, ['sellable', 'both'], true);
     }
 
     public function normalizeUnits(array $input): float
@@ -110,10 +114,10 @@ class Product extends Model
             'tax'  => round($tax, 2),
             'incl' => round($excl + $tax, 2),
         ];
-    
+    }
 
-    protected static function newFactory()
+    public static function newFactory()
     {
-        return \Manta\Products\Database\Factories\ProductFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\ProductFactory::new();
     }
 }

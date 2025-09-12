@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('product_variants', function (Blueprint $table) {
+        Schema::create('manta_product_variants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('manta_products')->cascadeOnDelete();
             $table->string('sku')->unique();
             $table->string('title')->nullable();
             $table->boolean('active')->default(true);
@@ -39,20 +39,20 @@ return new class extends Migration {
             $table->index(['product_id','active']);
         });
 
-        Schema::create('product_variant_values', function (Blueprint $table) {
+        Schema::create('manta_product_variant_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
-            $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete();
-            $table->foreignId('attribute_value_id')->constrained('attribute_values')->cascadeOnDelete();
+            $table->foreignId('product_variant_id')->constrained('manta_product_variants')->cascadeOnDelete();
+            $table->foreignId('attribute_id')->constrained('manta_attributes')->cascadeOnDelete();
+            $table->foreignId('attribute_value_id')->constrained('manta_attribute_values')->cascadeOnDelete();
 
-            $table->unique(['product_variant_id','attribute_id']);
-            $table->index(['attribute_id','attribute_value_id']);
+            $table->unique(['product_variant_id','attribute_id'], 'variant_attribute_unique');
+            $table->index(['attribute_id','attribute_value_id'], 'variant_attr_value_idx');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('product_variant_values');
-        Schema::dropIfExists('product_variants');
+        Schema::dropIfExists('manta_product_variant_values');
+        Schema::dropIfExists('manta_product_variants');
     }
 };
