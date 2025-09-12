@@ -1,0 +1,30 @@
+{
+  "name": "darvis/manta-products",
+  "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Compatible with reservations.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Arvid de Jong",
+      "email": "info@arvid.nl"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Manta\\Products\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Manta\\Products\\ServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
