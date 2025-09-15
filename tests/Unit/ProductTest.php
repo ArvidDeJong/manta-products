@@ -26,7 +26,7 @@ it('can create a product', function () {
 
 it('has correct fillable attributes', function () {
     $product = new Product();
-    
+
     $expectedFillable = [
         'active', 'block_size', 'capacity', 'calc_mode', 'dimension_unit',
         'height_mm', 'length_mm', 'max_order_qty', 'max_persons', 'meta',
@@ -203,8 +203,8 @@ it('calculates price for units', function () {
 });
 
 it('uses default tax rate when not set', function () {
-    config(['manta-products.default_tax_rate' => 19.00]);
-    
+    config(['manta-product.default_tax_rate' => 19.00]);
+
     $product = Product::factory()->create([
         'price_per_unit' => 10.00,
         'tax_rate' => null,
@@ -221,8 +221,8 @@ it('uses default tax rate when not set', function () {
 
 it('uses soft deletes', function () {
     $product = Product::factory()->create();
-    
+
     $product->delete();
-    
+
     expect($product->fresh()->deleted_at)->not->toBeNull();
 });

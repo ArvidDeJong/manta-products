@@ -1,4 +1,4 @@
-<div class="p-6 space-y-4">
+<div class="space-y-4 p-6">
     <h1 class="text-2xl font-bold">Nieuw Product Toevoegen</h1>
 
     <form wire:submit.prevent="save" class="space-y-4">
@@ -36,7 +36,7 @@
 
         <div class="flex items-center space-x-4">
             <flux:button type="submit" variant="primary">Opslaan</flux:button>
-            <flux:button href="{{ route('manta-products.demo.products') }}">Annuleren</flux:button>
+            <flux:button href="{{ route('manta-product.demo.products') }}">Annuleren</flux:button>
         </div>
     </form>
 </div>

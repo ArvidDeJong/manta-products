@@ -11,7 +11,7 @@ beforeEach(function () {
 it('can render the component', function () {
     Livewire::test(ProductList::class)
         ->assertStatus(200)
-        ->assertViewIs('manta-products::livewire.products.product-list');
+        ->assertViewIs('manta-product::livewire.products.product-list');
 });
 
 it('displays products', function () {

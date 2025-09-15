@@ -63,7 +63,7 @@ class ProductVariant extends Model
 
     public function effectiveTaxRate(): float
     {
-        return (float) ($this->tax_rate ?? $this->product->tax_rate ?? config('manta-products.default_tax_rate', 21.00));
+        return (float) ($this->tax_rate ?? $this->product->tax_rate ?? config('manta-product.default_tax_rate', 21.00));
     }
 
     protected static function newFactory()

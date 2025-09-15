@@ -11,7 +11,7 @@ beforeEach(function () {
 it('can render the component', function () {
     Livewire::test(ProductCreate::class)
         ->assertStatus(200)
-        ->assertViewIs('manta-products::livewire.products.product-create');
+        ->assertViewIs('manta-product::livewire.products.product-create');
 });
 
 it('has default values', function () {
@@ -41,7 +41,7 @@ it('can create a product with valid data', function () {
         ->set('product_type', 'bookable')
         ->set('unit_type', 'piece')
         ->call('save')
-        ->assertRedirect(route('manta-products.demo.products'));
+        ->assertRedirect(route('manta-product.demo.products'));
 
     expect(Product::where('slug', 'new-product')->first())
         ->title->toBe('New Product')

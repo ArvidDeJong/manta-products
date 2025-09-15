@@ -1,64 +1,66 @@
-<div class="p-6 space-y-4">
-    <flux:header>
-        <x-slot:title>
-            <h1 class="text-2xl font-bold">Producten</h1>
-        </x-slot:title>
-        <x-slot:actions>
-            <div class="flex items-center space-x-4">
-                <flux:select wire:model.live="perPage">
-                    <flux:select.option :value="10">10</flux:select.option>
-                    <flux:select.option :value="25">25</flux:select.option>
-                    <flux:select.option :value="50">50</flux:select.option>
-                    <flux:select.option :value="100">100</flux:select.option>
-                </flux:select>
-                <flux:input wire:model.live="search" placeholder="Zoeken..." />
-                <flux:checkbox wire:model.live="withTrashed" label="Met verwijderde" />
-                <flux:button href="{{ route('manta-products.demo.products.create') }}" icon="plus">Toevoegen</flux:button>
-            </div>
-        </x-slot:actions>
-    </flux:header>
+<flux:main container>
+    <x-manta.breadcrumb :$breadcrumb />
+    <div class="mb-8 mt-4 flex items-center justify-between">
+        <div>
+            <flux:button icon="plus" href="{{ route($this->module_routes['create']) }}">
+                Toevoegen
+            </flux:button>
+        </div>
+        <div style="width: 300px">
+            <flux:input type="search" wire:model="search" placeholder="Zoeken..." />
+        </div>
+    </div>
+    <x-manta.tables.tabs :$tablistShow :$trashed />
 
-    <flux:table :paginate="$products">
+    <flux:table :paginate="$items">
         <flux:table.columns>
-            <flux:table.column sortable :sorted="$sortBy === 'title'" :direction="$sortDirection" wire:click="doSort('title')">Titel</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'product_type'" :direction="$sortDirection" wire:click="doSort('product_type')">Type</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'unit_type'" :direction="$sortDirection" wire:click="doSort('unit_type')">Unit</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'block_size'" :direction="$sortDirection" wire:click="doSort('block_size')">Block Size</flux:table.column>
+            <flux:table.column>
+                <flux:icon.photo />
+            </flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'title'" :direction="$sortDirection"
+                wire:click="dosort('title')">
+                Titel</flux:table.column>
+
+            @if ($fields['slug']['active'])
+                <flux:table.column sortable :sorted="$sortBy === 'slug'" :direction="$sortDirection"
+                    wire:click="dosort('slug')">
+                    Slug
+                </flux:table.column>
+            @endif
+            <flux:table.column><flux:icon.document-duplicate /></flux:table.column>
             <flux:table.column />
         </flux:table.columns>
         <flux:table.rows>
-            @foreach($products as $product)
-                <flux:table.row>
-                    <flux:table.cell>{{ $product->title }}</flux:table.cell>
-                    <flux:table.cell>{{ $product->product_type }}</flux:table.cell>
-                    <flux:table.cell>{{ $product->unit_type }}</flux:table.cell>
-                    <flux:table.cell>{{ $product->block_size }} {{ $product->time_unit }}</flux:table.cell>
+            @foreach ($items as $item)
+                <flux:table.row data-id="{{ $item->id }}">
+
+                    @if ($this->fields['uploads']['active'])
+                        <flux:table.cell><x-manta.tables.image :item="$item->image" /></flux:table.cell>
+                    @endif
+                    <flux:table.cell>{{ $item->title }}</flux:table.cell>
+                    @if ($this->fields['slug']['active'])
+                        <flux:table.cell>
+                            @if ($item->slug && Route::has('website.news-item'))
+                                <a href="{{ route('website.news-item', ['slug' => $item->slug]) }}"
+                                    class="text-blue-500 hover:text-blue-800">
+                                    {{ $item->slug }}
+                                </a>
+                            @endif
+                        </flux:table.cell>
+                    @endif
+
+                    @if ($this->fields['uploads']['active'])
+                        <flux:table.cell>{{ count($item->images) > 0 ? count($item->images) : null }}</flux:table.cell>
+                    @endif
+
                     <flux:table.cell>
-                        <flux:button href="{{ route('manta-products.demo.products.update', $product) }}" icon="pencil-solid" size="sm" variant="subtle" />
-                        <flux:button href="{{ route('manta-products.demo.slots', $product) }}">Bekijk slots</flux:button>
-                        @if($product->trashed())
-                            <flux:button wire:click="restore('{{ $product->id }}')" icon="arrow-path" size="sm" variant="primary" />
-                        @else
-                            <flux:button wire:click="showDeleteModal('{{ $product->id }}')" icon="trash" size="sm" variant="danger" />
-                        @endif
+                        <flux:button size="sm" href="{{ route($this->module_routes['read'], $item) }}"
+                            icon="eye" />
+                        <x-manta.tables.delete-modal :item="$item" />
                     </flux:table.cell>
                 </flux:table.row>
             @endforeach
         </flux:table.rows>
     </flux:table>
 
-    <flux:modal name="delete-product-modal">
-        <flux:modal.header>
-            <flux:heading>Product Verwijderen</flux:heading>
-        </flux:modal.header>
-        <flux:modal.content>
-            <p>Weet je zeker dat je dit product wilt verwijderen?</p>
-        </flux:modal.content>
-        <flux:modal.actions>
-            <flux:button wire:click="delete" variant="danger">Verwijderen</flux:button>
-            <flux:modal.closer>
-                <flux:button variant="secondary">Annuleren</flux:button>
-            </flux:modal.closer>
-        </flux:modal.actions>
-    </flux:modal>
-</div>
+</flux:main>

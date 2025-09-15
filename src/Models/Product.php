@@ -77,8 +77,8 @@ class Product extends Model
     public function normalizeUnits(array $input): float
     {
         $unitType = $this->unit_type;
-        $round    = $this->rounding_mode ?: config('manta-products.default_rounding_mode', 'round');
-        $step     = $this->unit_step ?: (float) config('manta-products.default_unit_step', 0.01);
+        $round    = $this->rounding_mode ?: config('manta-product.default_rounding_mode', 'round');
+        $step     = $this->unit_step ?: (float) config('manta-product.default_unit_step', 0.01);
 
         $units = match ($this->calc_mode) {
             'direct_length' => ($input['length_mm'] ?? $this->length_mm ?? 0) / 1000,
@@ -107,7 +107,7 @@ class Product extends Model
     public function priceForUnits(float $units): array
     {
         $excl = (float) ($this->price_per_unit ?? 0) * $units;
-        $taxRate = (float) ($this->tax_rate ?? config('manta-products.default_tax_rate', 21.00));
+        $taxRate = (float) ($this->tax_rate ?? config('manta-product.default_tax_rate', 21.00));
         $tax  = $excl * ($taxRate / 100);
         return [
             'excl' => round($excl, 2),

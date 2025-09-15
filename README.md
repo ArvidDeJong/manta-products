@@ -1,4 +1,4 @@
-# darvis/manta-products
+# darvis/manta-product
 
 Products, attributes & variants with unit pricing (meter/m²/m³) for Laravel 11.  
 Also works great alongside reservations (rooms/slots) but does not depend on a reservation package.
@@ -16,8 +16,8 @@ Also works great alongside reservations (rooms/slots) but does not depend on a r
 ## Installation
 
 ```bash
-composer require darvis/manta-products
-php artisan vendor:publish --tag=manta-products-config
+composer require darvis/manta-product
+php artisan vendor:publish --tag=manta-product-config
 php artisan migrate
 ```
 
@@ -27,7 +27,7 @@ Laravel will auto-discover the service provider.
 
 ## Configuration
 
-`config/manta-products.php`
+`config/manta-product.php`
 
 - `default_tax_rate` — Used if neither product nor variant has a tax rate.  
 - `currency` — Display currency code (not enforced in DB).  
@@ -172,12 +172,12 @@ Use `Manta\Products\Services\AvailabilityService` to compute used quantity (rese
 Enable demo screens and routes:
 
 ```php
-// config/manta-products.php
+// config/manta-product.php
 'enable_demo' => true,
-'demo_prefix' => 'manta-products-demo',
+'demo_prefix' => 'manta-product-demo',
 ```
 
-Then visit `/manta-products-demo` to see:
+Then visit `/manta-product-demo` to see:
 - Product list
 - 7-day slot generator based on opening hours & exceptions
 

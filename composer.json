@@ -1,5 +1,5 @@
 {
-    "name": "darvis/manta-products",
+    "name": "darvis/manta-product",
     "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Compatible with reservations.",
     "type": "library",
     "license": "MIT",

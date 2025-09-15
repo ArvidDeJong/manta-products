@@ -26,7 +26,7 @@ class VariantMatrixService
             $codes = implode('-', array_keys($combo));
             $values = implode('-', array_values($combo));
 
-            $pattern = config('manta-products.sku_pattern', '{product_id}-{codes}-{values}');
+            $pattern = config('manta-product.sku_pattern', '{product_id}-{codes}-{values}');
             $sku = strtoupper(str_replace(
                 ['{product_id}', '{codes}', '{values}'],
                 [$product->id, $codes, $values],

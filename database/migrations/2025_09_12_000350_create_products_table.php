@@ -9,7 +9,6 @@ return new class extends Migration {
     {
         Schema::create('manta_products', function (Blueprint $table) {
             $table->id();
-            $table->boolean('active')->default(true);
             $table->unsignedInteger('capacity')->default(1);
             $table->unsignedInteger('block_size')->default(1);
             $table->string('product_type')->default('bookable'); // bookable|sellable|both
@@ -41,6 +40,12 @@ return new class extends Migration {
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->string('deleted_by')->nullable();
+            $table->integer('company_id')->nullable();
+            $table->string('host')->nullable();
+            $table->integer('pid')->nullable();
+            $table->string('locale')->nullable();
+            $table->boolean('active')->default(true);
+            $table->integer('sort')->default(1);
             $table->index(['active', 'product_type', 'unit_type']);
             $table->index(['length_mm', 'width_mm', 'height_mm']);
         });

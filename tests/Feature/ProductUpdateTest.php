@@ -13,7 +13,7 @@ it('can render the component', function () {
 
     Livewire::test(ProductUpdate::class, ['product' => $product])
         ->assertStatus(200)
-        ->assertViewIs('manta-products::livewire.products.product-update');
+        ->assertViewIs('manta-product::livewire.products.product-update');
 });
 
 it('loads product data on mount', function () {
@@ -51,7 +51,7 @@ it('can update a product with valid data', function () {
         ->set('product_type', 'both')
         ->set('unit_type', 'kg')
         ->call('save')
-        ->assertRedirect(route('manta-products.demo.products'));
+        ->assertRedirect(route('manta-product.demo.products'));
 
     expect($product->fresh())
         ->title->toBe('Updated Title')
@@ -136,7 +136,7 @@ it('can delete a product', function () {
 
     Livewire::test(ProductUpdate::class, ['product' => $product])
         ->call('deleteConfirm')
-        ->assertRedirect(route('manta-products.demo.products'));
+        ->assertRedirect(route('manta-product.demo.products'));
 
     expect($product->fresh())->toBeNull();
 });

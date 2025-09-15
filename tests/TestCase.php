@@ -32,10 +32,10 @@ class TestCase extends Orchestra
             'prefix'   => '',
         ]);
 
-        // Set up manta-products config
-        config()->set('manta-products.default_tax_rate', 21.00);
-        config()->set('manta-products.default_unit_step', 0.01);
-        config()->set('manta-products.default_rounding_mode', 'round');
+        // Set up manta-product config
+        config()->set('manta-product.default_tax_rate', 21.00);
+        config()->set('manta-product.default_unit_step', 0.01);
+        config()->set('manta-product.default_rounding_mode', 'round');
     }
 
     protected function defineDatabaseMigrations()
