@@ -48,6 +48,9 @@ trait ProductTrait
     public ?string $host = null;
 
     public ?string $locale = null;
+
+    // Tab management
+    public string $activeTab = 'general';
     public ?string $pid = null;
 
     // Product eigenschappen
@@ -78,6 +81,15 @@ trait ProductTrait
     public string $dimension_unit = 'mm';
 
     public array $productcat = [];
+    
+    // Product attributen
+    public array $availableAttributes = [];
+    public array $selectedAttributes = [];
+    
+    // Product varianten
+    public array $variants = [];
+    public array $newVariant = [];
+    public bool $showVariantForm = false;
 
     #[Locked]
     public ?string $redirect_url = null;
@@ -127,6 +139,190 @@ trait ProductTrait
         $return['tax_rate.numeric'] = 'Het BTW percentage moet een getal zijn';
         $return['tax_rate.max'] = 'Het BTW percentage mag niet hoger zijn dan 100';
         return $return;
+    }
+
+    public function loadAttributes()
+    {
+        // Laad alle beschikbare attributen
+        $this->availableAttributes = \Darvis\MantaProduct\Models\Attribute::orderBy('sort')->get()->toArray();
+        
+        // Laad geselecteerde attributen voor dit product
+        if ($this->item) {
+            $productAttributes = \Darvis\MantaProduct\Models\ProductAttribute::where('product_id', $this->item->id)
+                ->with('attribute')
+                ->orderBy('sort')
+                ->get();
+                
+            foreach ($productAttributes as $productAttribute) {
+                $this->selectedAttributes[$productAttribute->attribute_id] = [
+                    'is_required' => $productAttribute->is_required,
+                    'sort' => $productAttribute->sort,
+                ];
+            }
+        }
+    }
+
+    public function toggleAttribute($attributeId)
+    {
+        if (isset($this->selectedAttributes[$attributeId])) {
+            unset($this->selectedAttributes[$attributeId]);
+        } else {
+            $this->selectedAttributes[$attributeId] = [
+                'is_required' => false,
+                'sort' => count($this->selectedAttributes) + 1,
+            ];
+        }
+    }
+
+    public function updateAttributeRequired($attributeId, $isRequired)
+    {
+        if (isset($this->selectedAttributes[$attributeId])) {
+            $this->selectedAttributes[$attributeId]['is_required'] = $isRequired;
+        }
+    }
+
+    public function saveProductAttributes()
+    {
+        if (!$this->item) {
+            return;
+        }
+
+        // Verwijder alle bestaande product attributen
+        \Darvis\MantaProduct\Models\ProductAttribute::where('product_id', $this->item->id)->delete();
+
+        // Voeg nieuwe product attributen toe
+        foreach ($this->selectedAttributes as $attributeId => $data) {
+            \Darvis\MantaProduct\Models\ProductAttribute::create([
+                'product_id' => $this->item->id,
+                'attribute_id' => $attributeId,
+                'is_required' => $data['is_required'],
+                'sort' => $data['sort'],
+            ]);
+        }
+    }
+
+    public function loadVariants()
+    {
+        if ($this->item) {
+            $this->variants = $this->item->variants()
+                ->with(['values.attribute', 'values.attributeValue'])
+                ->get()
+                ->toArray();
+        }
+    }
+
+    public function initNewVariant()
+    {
+        $this->newVariant = [
+            'title' => '',
+            'sku' => '',
+            'active' => true,
+            'capacity' => 1,
+            'price_override_excl' => null,
+            'stock_qty' => 0,
+            'tax_rate' => null,
+            'unit_step' => null,
+            'unit_type' => null,
+            'calc_mode' => null,
+            'wastage_pct' => null,
+            'rounding_mode' => null,
+            'length_mm' => null,
+            'width_mm' => null,
+            'height_mm' => null,
+            'variant_values' => [],
+        ];
+    }
+
+    public function showVariantForm()
+    {
+        $this->initNewVariant();
+        $this->showVariantForm = true;
+    }
+
+    public function hideVariantForm()
+    {
+        $this->showVariantForm = false;
+        $this->newVariant = [];
+    }
+
+    public function addVariant()
+    {
+        if (!$this->item) {
+            return;
+        }
+
+        $variantData = [
+            'product_id' => $this->item->id,
+            'title' => $this->newVariant['title'],
+            'sku' => $this->newVariant['sku'],
+            'active' => $this->newVariant['active'],
+            'capacity' => $this->newVariant['capacity'],
+            'price_override_excl' => $this->newVariant['price_override_excl'],
+            'stock_qty' => $this->newVariant['stock_qty'],
+            'tax_rate' => $this->newVariant['tax_rate'],
+            'unit_step' => $this->newVariant['unit_step'],
+            'unit_type' => $this->newVariant['unit_type'],
+            'calc_mode' => $this->newVariant['calc_mode'],
+            'wastage_pct' => $this->newVariant['wastage_pct'],
+            'rounding_mode' => $this->newVariant['rounding_mode'],
+            'length_mm' => $this->newVariant['length_mm'],
+            'width_mm' => $this->newVariant['width_mm'],
+            'height_mm' => $this->newVariant['height_mm'],
+        ];
+
+        // Genereer variant key op basis van attribute values
+        $variantKey = $this->generateVariantKey($this->newVariant['variant_values'] ?? []);
+        $variantData['variant_key'] = $variantKey;
+
+        $variant = \Darvis\MantaProduct\Models\ProductVariant::create($variantData);
+
+        // Voeg variant values toe
+        if (!empty($this->newVariant['variant_values'])) {
+            foreach ($this->newVariant['variant_values'] as $attributeId => $valueId) {
+                \Darvis\MantaProduct\Models\ProductVariantValue::create([
+                    'product_variant_id' => $variant->id,
+                    'attribute_id' => $attributeId,
+                    'attribute_value_id' => $valueId,
+                ]);
+            }
+        }
+
+        $this->hideVariantForm();
+        $this->loadVariants();
+    }
+
+    public function deleteVariant($variantId)
+    {
+        $variant = \Darvis\MantaProduct\Models\ProductVariant::find($variantId);
+        if ($variant && $variant->product_id === $this->item->id) {
+            // Verwijder eerst de variant values
+            \Darvis\MantaProduct\Models\ProductVariantValue::where('product_variant_id', $variantId)->delete();
+            // Verwijder de variant
+            $variant->delete();
+            $this->loadVariants();
+        }
+    }
+
+    private function generateVariantKey(array $variantValues): string
+    {
+        if (empty($variantValues)) {
+            return 'default';
+        }
+
+        $keys = [];
+        foreach ($variantValues as $attributeId => $valueId) {
+            $keys[] = $attributeId . ':' . $valueId;
+        }
+        
+        return implode('|', $keys);
+    }
+
+    public function getAttributeValues($attributeId)
+    {
+        return \Darvis\MantaProduct\Models\AttributeValue::where('attribute_id', $attributeId)
+            ->orderBy('sort')
+            ->get()
+            ->toArray();
     }
 
     protected function applySearch($query)

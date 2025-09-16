@@ -71,6 +71,11 @@ class Product extends Model
         return $this->hasMany(\Darvis\MantaProduct\Models\ProductVariant::class);
     }
 
+    public function productAttributes(): HasMany
+    {
+        return $this->hasMany(\Darvis\MantaProduct\Models\ProductAttribute::class);
+    }
+
     public function isSellable(): bool
     {
         return in_array($this->product_type, ['sellable', 'both'], true);

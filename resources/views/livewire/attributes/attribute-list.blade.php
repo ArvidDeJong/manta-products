@@ -5,6 +5,10 @@
             <flux:button icon="plus" href="{{ route($this->module_routes['create']) }}">
                 Toevoegen
             </flux:button>
+
+            <flux:button icon="list-bullet" href="{{ route('product.list') }}">
+                Producten
+            </flux:button>
         </div>
         <div style="width: 300px">
             <flux:input type="search" wire:model="search" placeholder="Zoeken..." />
@@ -18,29 +22,29 @@
                 wire:click="dosort('name')">
                 Naam
             </flux:table.column>
-            
+
             <flux:table.column sortable :sorted="$sortBy === 'code'" :direction="$sortDirection"
                 wire:click="dosort('code')">
                 Code
             </flux:table.column>
-            
+
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                 wire:click="dosort('type')">
                 Type
             </flux:table.column>
-            
+
             <flux:table.column sortable :sorted="$sortBy === 'sort'" :direction="$sortDirection"
                 wire:click="dosort('sort')">
                 Sortering
             </flux:table.column>
-            
+
             <flux:table.column>
                 Waarden
             </flux:table.column>
-            
+
             <flux:table.column />
         </flux:table.columns>
-        
+
         <flux:table.rows>
             @foreach ($items as $item)
                 <flux:table.row data-id="{{ $item->id }}">

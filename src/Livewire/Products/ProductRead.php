@@ -23,10 +23,12 @@ class ProductRead extends Component
         $this->getLocaleInfo();
         $this->getBreadcrumb('read');
         $this->getTablist();
+        $this->loadAttributes();
+        $this->loadVariants();
     }
 
     public function render()
     {
-        return view('manta-cms::livewire.default.manta-default-read');
+        return view('manta-product::livewire.products.product-read');
     }
 }

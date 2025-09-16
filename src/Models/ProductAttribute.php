@@ -20,4 +20,14 @@ class ProductAttribute extends Model
         'is_required' => 'bool',
         'sort'        => 'int',
     ];
+
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

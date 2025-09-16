@@ -52,11 +52,13 @@ class ProductUpdate extends Component
         $this->getLocaleInfo();
         $this->getBreadcrumb('update');
         $this->getTablist();
+        $this->loadAttributes();
+        $this->loadVariants();
     }
 
     public function render()
     {
-        return view('manta-cms::livewire.default.manta-default-update');
+        return view('manta-product::livewire.products.product-update');
     }
 
     public function save()
@@ -91,6 +93,9 @@ class ProductUpdate extends Component
         );
         $row['updated_by'] = auth('staff')->user()->name;
         Product::where('id', $this->id)->update($row);
+
+        // Sla product attributen op
+        $this->saveProductAttributes();
 
         Flux::toast('Opgeslagen', duration: 1000, variant: 'success');
     }

@@ -28,6 +28,8 @@ class ProductCreate extends Component
         $this->getLocaleInfo();
         $this->getTablist();
         $this->getBreadcrumb('create');
+        $this->loadAttributes();
+        $this->loadVariants();
 
         // Faker data voor development
         if (env('USE_FAKER', false)) {
@@ -98,7 +100,7 @@ class ProductCreate extends Component
 
     public function render()
     {
-        return view('manta-cms::livewire.default.manta-default-create');
+        return view('manta-product::livewire.products.product-create');
     }
 
     public function save()
@@ -134,7 +136,13 @@ class ProductCreate extends Component
         $row['created_by'] = auth('staff')->user()->name;
         $row['host'] = request()->host();
         $row['slug'] = $this->slug ? $this->slug : Str::of($this->title)->slug('-');
-        Product::create($row);
+        $product = Product::create($row);
+
+        // Zet het nieuwe product als item voor attributen opslaan
+        $this->item = $product;
+        
+        // Sla product attributen op
+        $this->saveProductAttributes();
 
         return $this->redirect(ProductList::class);
     }
