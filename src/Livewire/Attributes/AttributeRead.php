@@ -27,6 +27,6 @@ class AttributeRead extends Component
 
     public function render()
     {
-        return view('manta-cms::livewire.default.manta-default-read');
+        return view('manta-product::livewire.attributes.attribute-read');
     }
 }

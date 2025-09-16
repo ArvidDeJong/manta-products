@@ -28,9 +28,6 @@ class AttributeCreate extends Component
         }
     }
 
-
-
-
     public function render()
     {
         return view('manta-product::livewire.attributes.attribute-create');
@@ -38,25 +35,7 @@ class AttributeCreate extends Component
 
     public function save()
     {
-        $this->validate();
-
-        // Build config array based on type
-        $config = $this->buildConfig();
-
-        $row = $this->only(
-            'company_id',
-            'locale',
-            'code',
-            'name',
-            'type',
-            'sort'
-        );
-        $row['config'] = $config;
-        $row['created_by'] = auth('staff')->user()->name;
-        $row['host'] = request()->host();
-
-        Attribute::create($row);
-
+        $this->saveAttribute(false);
         return $this->redirect(AttributeList::class);
     }
 }

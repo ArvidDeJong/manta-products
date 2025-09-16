@@ -10,6 +10,7 @@ use Manta\FluxCMS\Models\MantaModule;
 use Manta\FluxCMS\Services\MantaOpenai;
 use Manta\FluxCMS\Services\ModuleSettingsService;
 use Illuminate\Support\Str;
+use Darvis\MantaProduct\Models\AttributeValue;
 
 trait AttributeTrait
 {
@@ -65,6 +66,17 @@ trait AttributeTrait
     public ?string $configUnit = null;
     public ?int $configMaxLength = null;
     public ?string $configPlaceholder = null;
+
+    // AttributeValue properties
+    public $newValueCode = '';
+    public $newValueValue = '';
+    public $newValueHex = '';
+    public $newValueSort = 0;
+    public $editingValueId = null;
+    public $editingValueCode = '';
+    public $editingValueValue = '';
+    public $editingValueHex = '';
+    public $editingValueSort = 0;
 
     public function rules()
     {
@@ -241,5 +253,139 @@ trait AttributeTrait
             ]),
             default => []
         };
+    }
+
+    // AttributeValue methods
+    public function addAttributeValue()
+    {
+        $this->validate([
+            'newValueCode' => 'required|string|max:255',
+            'newValueValue' => 'required|string|max:255',
+            'newValueHex' => 'nullable|string|max:7',
+            'newValueSort' => 'required|integer|min:0',
+        ]);
+
+        AttributeValue::create([
+            'attribute_id' => $this->id,
+            'code' => $this->newValueCode,
+            'value' => $this->newValueValue,
+            'hex' => $this->newValueHex ?: null,
+            'sort' => $this->newValueSort,
+        ]);
+
+        // Reset form
+        $this->resetNewValueForm();
+
+        // Refresh the item to show new value
+        $this->refreshItemWithValues();
+
+        Flux::toast('Waarde toegevoegd', duration: 2000, variant: 'success');
+    }
+
+    public function editAttributeValue($valueId)
+    {
+        $value = AttributeValue::find($valueId);
+        if ($value && $value->attribute_id == $this->id) {
+            $this->editingValueId = $valueId;
+            $this->editingValueCode = $value->code;
+            $this->editingValueValue = $value->value;
+            $this->editingValueHex = $value->hex ?? '';
+            $this->editingValueSort = $value->sort;
+        }
+    }
+
+    public function updateAttributeValue()
+    {
+        $this->validate([
+            'editingValueCode' => 'required|string|max:255',
+            'editingValueValue' => 'required|string|max:255',
+            'editingValueHex' => 'nullable|string|max:7',
+            'editingValueSort' => 'required|integer|min:0',
+        ]);
+
+        $value = AttributeValue::find($this->editingValueId);
+        if ($value && $value->attribute_id == $this->id) {
+            $value->update([
+                'code' => $this->editingValueCode,
+                'value' => $this->editingValueValue,
+                'hex' => $this->editingValueHex ?: null,
+                'sort' => $this->editingValueSort,
+            ]);
+
+            $this->cancelEditValue();
+            $this->refreshItemWithValues();
+
+            Flux::toast('Waarde bijgewerkt', duration: 2000, variant: 'success');
+        }
+    }
+
+    public function deleteAttributeValue($valueId)
+    {
+        $value = AttributeValue::find($valueId);
+        if ($value && $value->attribute_id == $this->id) {
+            $value->delete();
+            $this->refreshItemWithValues();
+
+            Flux::toast('Waarde verwijderd', duration: 2000, variant: 'success');
+        }
+    }
+
+    public function cancelEditValue()
+    {
+        $this->editingValueId = null;
+        $this->editingValueCode = '';
+        $this->editingValueValue = '';
+        $this->editingValueHex = '';
+        $this->editingValueSort = 0;
+    }
+
+    public function updatedNewValueValue($value)
+    {
+        if (!$this->newValueCode && $value) {
+            $this->newValueCode = Str::slug($value, '_');
+        }
+    }
+
+    private function resetNewValueForm()
+    {
+        $this->newValueCode = '';
+        $this->newValueValue = '';
+        $this->newValueHex = '';
+        $this->newValueSort = 0;
+    }
+
+    private function refreshItemWithValues()
+    {
+        if (isset($this->item) && $this->item) {
+            $this->item = $this->item->fresh(['values']);
+        }
+    }
+
+    protected function saveAttribute($isUpdate = false)
+    {
+        $this->validate();
+
+        // Build config array based on type
+        $config = $this->buildConfig();
+
+        $row = $this->only(
+            'company_id',
+            'locale',
+            'code',
+            'name',
+            'type',
+            'sort'
+        );
+        $row['config'] = $config;
+        
+        if ($isUpdate) {
+            $row['updated_by'] = auth('staff')->user()->name;
+            Attribute::where('id', $this->id)->update($row);
+            Flux::toast('Opgeslagen', duration: 1000, variant: 'success');
+        } else {
+            $row['created_by'] = auth('staff')->user()->name;
+            $row['host'] = request()->host();
+            Attribute::create($row);
+        }
     }
 }
