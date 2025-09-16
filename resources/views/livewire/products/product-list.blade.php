@@ -5,6 +5,10 @@
             <flux:button icon="plus" href="{{ route($this->module_routes['create']) }}">
                 Toevoegen
             </flux:button>
+
+            <flux:button icon="list-bullet" href="{{ route('attribute.list') }}">
+                Eigenschappen
+            </flux:button>
         </div>
         <div style="width: 300px">
             <flux:input type="search" wire:model="search" placeholder="Zoeken..." />
@@ -34,7 +38,7 @@
             @foreach ($items as $item)
                 <flux:table.row data-id="{{ $item->id }}">
 
-                    @if ($this->fields['uploads']['active'])
+                    @if ($this->fields['uploads'] && $this->fields['uploads']['active'])
                         <flux:table.cell><x-manta.tables.image :item="$item->image" /></flux:table.cell>
                     @endif
                     <flux:table.cell>{{ $item->title }}</flux:table.cell>
@@ -49,7 +53,7 @@
                         </flux:table.cell>
                     @endif
 
-                    @if ($this->fields['uploads']['active'])
+                    @if (isset($this->fields['uploads']) && $this->fields['uploads']['active'])
                         <flux:table.cell>{{ count($item->images) > 0 ? count($item->images) : null }}</flux:table.cell>
                     @endif
 

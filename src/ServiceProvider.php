@@ -37,6 +37,15 @@ class ServiceProvider extends BaseProvider
         Livewire::component('products.product-list', \Darvis\MantaProduct\Livewire\Products\ProductList::class);
         Livewire::component('products.product-create', \Darvis\MantaProduct\Livewire\Products\ProductCreate::class);
         Livewire::component('products.product-update', \Darvis\MantaProduct\Livewire\Products\ProductUpdate::class);
+        Livewire::component('products.product-upload', \Darvis\MantaProduct\Livewire\Products\ProductUpload::class);
+        Livewire::component('products.product-read', \Darvis\MantaProduct\Livewire\Products\ProductRead::class);
+
+        // Register Attribute Livewire components
+        Livewire::component('attributes.attribute-list', \Darvis\MantaProduct\Livewire\Attributes\AttributeList::class);
+        Livewire::component('attributes.attribute-create', \Darvis\MantaProduct\Livewire\Attributes\AttributeCreate::class);
+        Livewire::component('attributes.attribute-update', \Darvis\MantaProduct\Livewire\Attributes\AttributeUpdate::class);
+        Livewire::component('attributes.attribute-upload', \Darvis\MantaProduct\Livewire\Attributes\AttributeUpload::class);
+        Livewire::component('attributes.attribute-read', \Darvis\MantaProduct\Livewire\Attributes\AttributeRead::class);
 
         // Register commands
         if ($this->app->runningInConsole()) {

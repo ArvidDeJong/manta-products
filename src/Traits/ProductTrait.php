@@ -16,13 +16,13 @@ trait ProductTrait
     public function __construct()
     {
         $this->module_routes = [
-            'name' => 'products',
-            'list' => 'products.list',
-            'create' => 'products.create',
-            'update' => 'products.update',
-            'read' => 'products.read',
-            'upload' => 'products.upload',
-            'settings' => 'products.settings',
+            'name' => 'product',
+            'list' => 'product.list',
+            'create' => 'product.create',
+            'update' => 'product.update',
+            'read' => 'product.read',
+            'upload' => 'product.upload',
+            'settings' => 'product.settings',
             'maps' => null,
         ];
 

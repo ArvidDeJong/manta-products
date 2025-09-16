@@ -21,6 +21,13 @@ return [
     "ereg" => [],
     "settings" => [],
     "fields" => [
+        "uploads" => [
+            "active" => true,
+            "type" => "",
+            "title" => "Uploads",
+            "read" => false,
+            "required" => false,
+        ],
         "active" => [
             "active" => true,
             "type" => "checkbox",
