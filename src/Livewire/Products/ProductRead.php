@@ -25,6 +25,8 @@ class ProductRead extends Component
         $this->getTablist();
         $this->loadAttributes();
         $this->loadVariants();
+        $this->loadCategories();
+        $this->loadUploads();
     }
 
     public function render()

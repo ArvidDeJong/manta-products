@@ -18,12 +18,14 @@
         </div>
     </div>
 
-    <flux:tab.group wire:model="activeTab">
+    <flux:tab.group wire:model="tablistShow">
         <flux:tabs>
             <flux:tab name="general">Algemeen</flux:tab>
             <flux:tab name="pricing">Prijzen</flux:tab>
             <flux:tab name="dimensions">Afmetingen</flux:tab>
             <flux:tab name="attributes">Eigenschappen</flux:tab>
+            <flux:tab name="categories">Categorieën</flux:tab>
+            <flux:tab name="uploads">Bestanden</flux:tab>
         </flux:tabs>
 
         <flux:tab.panel name="general" class="mt-6">
@@ -236,6 +238,129 @@
                 </div>
 
                 <div class="space-y-6">
+                    <flux:card class="space-y-4">
+                        <flux:heading size="lg">Acties</flux:heading>
+                        <flux:button href="{{ route($this->module_routes['update'], $item) }}" variant="primary" class="w-full" icon="pencil">
+                            Bewerken
+                        </flux:button>
+                    </flux:card>
+                </div>
+            </div>
+        </flux:tab.panel>
+
+        <flux:tab.panel name="categories" class="mt-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <flux:card class="space-y-6">
+                        <flux:heading size="lg">Gekoppelde categorieën</flux:heading>
+                        
+                        @if(count($selectedCategories) > 0)
+                            <div class="space-y-2">
+                                @foreach($selectedCategories as $categoryId)
+                                    @php
+                                        $category = collect($availableCategories)->firstWhere('id', $categoryId);
+                                    @endphp
+                                    @if($category)
+                                        <div class="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <div class="flex-1">
+                                                <h4 class="font-medium text-blue-900">{{ $category['name'] }}</h4>
+                                                @if($category['parent_id'])
+                                                    <p class="text-sm text-blue-700">{{ $this->getCategoryBreadcrumb($category) }}</p>
+                                                @endif
+                                                @if($category['description'])
+                                                    <p class="text-sm text-gray-600 mt-1">{{ $category['description'] }}</p>
+                                                @endif
+                                            </div>
+                                            @if($category['active'])
+                                                <flux:badge size="sm" color="green">Actief</flux:badge>
+                                            @else
+                                                <flux:badge size="sm" color="gray">Inactief</flux:badge>
+                                            @endif
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-500">
+                                <flux:icon.folder class="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                                <p class="text-lg font-medium mb-2">Geen categorieën</p>
+                                <p class="text-sm">Dit product is nog niet aan categorieën gekoppeld.</p>
+                            </div>
+                        @endif
+                    </flux:card>
+                </div>
+
+                <div class="space-y-6">
+                    <flux:card class="space-y-4">
+                        <flux:heading size="lg">Statistieken</flux:heading>
+                        <div class="text-sm text-gray-600">
+                            <p><strong>Totaal categorieën:</strong> {{ count($selectedCategories) }}</p>
+                        </div>
+                    </flux:card>
+                    
+                    <flux:card class="space-y-4">
+                        <flux:heading size="lg">Acties</flux:heading>
+                        <flux:button href="{{ route($this->module_routes['update'], $item) }}" variant="primary" class="w-full" icon="pencil">
+                            Bewerken
+                        </flux:button>
+                    </flux:card>
+                </div>
+            </div>
+        </flux:tab.panel>
+
+        <flux:tab.panel name="uploads" class="mt-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <flux:card class="space-y-6">
+                        <flux:heading size="lg">Geüploade bestanden</flux:heading>
+                        
+                        @if(count($existingUploads) > 0)
+                            <div class="space-y-3">
+                                @foreach($existingUploads as $upload)
+                                    <div class="flex items-center justify-between p-4 border rounded-lg bg-gray-50 border-gray-200">
+                                        <div class="flex items-center space-x-3">
+                                            <flux:icon.document class="h-8 w-8 text-gray-400" />
+                                            <div>
+                                                <h4 class="font-medium text-gray-900">{{ $upload['filenameOriginal'] ?? $upload['filename'] }}</h4>
+                                                <p class="text-sm text-gray-500">
+                                                    {{ number_format($upload['size'] / 1024, 2) }} KB
+                                                    @if($upload['extension'])
+                                                        • {{ strtoupper($upload['extension']) }}
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            @if($upload['url'])
+                                                <flux:button href="{{ $upload['url'] }}" target="_blank" size="sm" variant="ghost" icon="arrow-down-tray">
+                                                    Download
+                                                </flux:button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-500">
+                                <flux:icon.document class="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                                <p class="text-lg font-medium mb-2">Geen bestanden</p>
+                                <p class="text-sm">Er zijn nog geen bestanden geüpload voor dit product.</p>
+                            </div>
+                        @endif
+                    </flux:card>
+                </div>
+
+                <div class="space-y-6">
+                    <flux:card class="space-y-4">
+                        <flux:heading size="lg">Statistieken</flux:heading>
+                        <div class="text-sm text-gray-600">
+                            <p><strong>Totaal bestanden:</strong> {{ count($existingUploads) }}</p>
+                            @if(count($existingUploads) > 0)
+                                <p><strong>Totale grootte:</strong> {{ number_format(collect($existingUploads)->sum('size') / 1024 / 1024, 2) }} MB</p>
+                            @endif
+                        </div>
+                    </flux:card>
+                    
                     <flux:card class="space-y-4">
                         <flux:heading size="lg">Acties</flux:heading>
                         <flux:button href="{{ route($this->module_routes['update'], $item) }}" variant="primary" class="w-full" icon="pencil">

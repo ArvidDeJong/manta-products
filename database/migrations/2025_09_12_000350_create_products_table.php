@@ -15,7 +15,14 @@ return new class extends Migration {
             $table->string('time_unit')->nullable(); // minute|day
             $table->foreignId('resource_id')->nullable()->constrained('manta_resources')->nullOnDelete();
             $table->string('title');
+            $table->text('title_2')->nullable();
+            $table->text('title_3')->nullable();
             $table->string('slug')->unique();
+            $table->text('excerpt')->nullable();
+            $table->text('description')->nullable();
+            $table->text('description_2')->nullable();
+            $table->text('description_3')->nullable();
+            $table->text('comments')->nullable();
 
             // Unit pricing
             $table->string('unit_type')->nullable(); // piece|meter|m2|m3

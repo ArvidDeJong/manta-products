@@ -21,6 +21,14 @@ return [
     "ereg" => [],
     "settings" => [],
     "fields" => [
+        "locale" => [
+            "active" => true,
+            "type" => "text",
+            "title" => "Taal",
+            "read" => true,
+            "required" => false,
+            "edit" => false,
+        ],
         "uploads" => [
             "active" => true,
             "type" => "",
@@ -59,6 +67,11 @@ return [
             "read" => true,
             "required" => false,
             "edit" => true,
+            "options" => [
+                "bookable" => "Boekbaar",
+                "sellable" => "Verkoopbaar",
+                "both" => "Beide"
+            ],
         ],
         "time_unit" => [
             "active" => true,
@@ -99,6 +112,12 @@ return [
             "read" => true,
             "required" => false,
             "edit" => true,
+            "options" => [
+                "piece" => "Stuk",
+                "meter" => "Meter",
+                "m2" => "Vierkante meter",
+                "m3" => "Kubieke meter"
+            ],
         ],
         "unit_step" => [
             "active" => true,

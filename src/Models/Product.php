@@ -29,7 +29,12 @@ class Product extends Model
         'block_size',
         'capacity',
         'calc_mode',
+        'comments',
+        'description',
+        'description_2',
+        'description_3',
         'dimension_unit',
+        'excerpt',
         'height_mm',
         'length_mm',
         'max_order_qty',
@@ -44,6 +49,8 @@ class Product extends Model
         'tax_rate',
         'time_unit',
         'title',
+        'title_2',
+        'title_3',
         'unit_step',
         'unit_type',
         'wastage_pct',
@@ -74,6 +81,11 @@ class Product extends Model
     public function productAttributes(): HasMany
     {
         return $this->hasMany(\Darvis\MantaProduct\Models\ProductAttribute::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(\Darvis\MantaProduct\Models\Category::class, 'manta_category_product', 'product_id', 'category_id');
     }
 
     public function isSellable(): bool
@@ -121,6 +133,65 @@ class Product extends Model
             'tax'  => round($tax, 2),
             'incl' => round($excl + $tax, 2),
         ];
+    }
+
+    /**
+     * Check if this product is a gift card
+     */
+    public function isGiftCard(): bool
+    {
+        return $this->meta['is_gift_card'] ?? false;
+    }
+
+    /**
+     * Get the minimum price from variants or base price
+     */
+    public function getFromPriceAttribute(): ?float
+    {
+        if ($this->variants->count() > 0) {
+            return $this->variants->min('price_override_excl');
+        }
+        return $this->price_per_unit;
+    }
+
+    /**
+     * Get the maximum price from variants or base price
+     */
+    public function getMaxPriceAttribute(): ?float
+    {
+        if ($this->variants->count() > 0) {
+            return $this->variants->max('price_override_excl');
+        }
+        return $this->price_per_unit;
+    }
+
+    /**
+     * Get formatted price display for frontend
+     */
+    public function getPriceDisplayAttribute(): string
+    {
+        if ($this->isGiftCard()) {
+            if ($this->variants->count() > 0) {
+                return 'vanaf €' . number_format($this->from_price, 0);
+            }
+            return 'Cadeaubon';
+        }
+
+        if ($this->variants->count() > 0) {
+            $min = $this->from_price;
+            $max = $this->max_price;
+            
+            if ($min === $max) {
+                return '€' . number_format($min, 2);
+            }
+            return 'vanaf €' . number_format($min, 2);
+        }
+
+        if ($this->price_per_unit) {
+            return '€' . number_format($this->price_per_unit, 2);
+        }
+
+        return 'Prijs op aanvraag';
     }
 
     public static function newFactory()

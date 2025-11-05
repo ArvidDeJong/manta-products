@@ -21,6 +21,14 @@ return [
     "ereg" => [],
     "settings" => [],
     "fields" => [
+        "locale" => [
+            "active" => false,
+            "type" => "text",
+            "title" => "Taal",
+            "read" => true,
+            "required" => false,
+            "edit" => false,
+        ],
         "uploads" => [
             "active" => false,
             "type" => "",

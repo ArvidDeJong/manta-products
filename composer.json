@@ -1,6 +1,6 @@
 {
     "name": "darvis/manta-product",
-    "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Compatible with reservations.",
+    "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Includes gift cards, shopping cart, and reservation compatibility.",
     "type": "library",
     "license": "MIT",
     "authors": [

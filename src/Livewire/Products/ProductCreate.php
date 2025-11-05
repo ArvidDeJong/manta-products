@@ -4,16 +4,18 @@ namespace Darvis\MantaProduct\Livewire\Products;
 
 use Darvis\MantaProduct\Models\Product;
 use Darvis\MantaProduct\Traits\ProductTrait;
+use Darvis\MantaProduct\Traits\GeneratesSkuTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Manta\FluxCMS\Traits\MantaTrait;
 use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
 
 #[Layout('manta-cms::layouts.app')]
 class ProductCreate extends Component
 {
-    use MantaTrait, ProductTrait;
+    use MantaTrait, ProductTrait, WithFileUploads, GeneratesSkuTrait;
 
     public function mount(Request $request)
     {
@@ -30,6 +32,8 @@ class ProductCreate extends Component
         $this->getBreadcrumb('create');
         $this->loadAttributes();
         $this->loadVariants();
+        $this->loadCategories();
+        $this->loadUploads();
 
         // Faker data voor development
         if (env('USE_FAKER', false)) {
@@ -118,7 +122,14 @@ class ProductCreate extends Component
             'time_unit',
             'resource_id',
             'title',
+            'title_2',
+            'title_3',
             'slug',
+            'excerpt',
+            'description',
+            'description_2',
+            'description_3',
+            'comments',
             'unit_type',
             'unit_step',
             'min_order_qty',
@@ -138,12 +149,20 @@ class ProductCreate extends Component
         $row['slug'] = $this->slug ? $this->slug : Str::of($this->title)->slug('-');
         $product = Product::create($row);
 
-        // Zet het nieuwe product als item voor attributen opslaan
+        // Zet het nieuwe product als item voor attributen, categorieën en uploads opslaan
         $this->item = $product;
         
         // Sla product attributen op
         $this->saveProductAttributes();
+        
+        // Sla categorieën op
+        $this->saveCategories();
+        
+        // Sla uploads op
+        $this->saveUploads();
 
-        return $this->redirect(ProductList::class);
+        \Flux\Flux::toast('Product succesvol aangemaakt!', variant: 'success');
+        
+        return $this->redirect(route('product.update', ['product' => $product->id]));
     }
 }

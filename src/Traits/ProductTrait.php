@@ -61,7 +61,14 @@ trait ProductTrait
     public ?string $time_unit = null; // minute|day
     public ?int $resource_id = null;
     public ?string $title = null;
+    public ?string $title_2 = null;
+    public ?string $title_3 = null;
     public ?string $slug = null;
+    public ?string $excerpt = null;
+    public ?string $description = null;
+    public ?string $description_2 = null;
+    public ?string $description_3 = null;
+    public ?string $comments = null;
 
     // Unit pricing
     public ?string $unit_type = null; // piece|meter|m2|m3
@@ -81,15 +88,30 @@ trait ProductTrait
     public string $dimension_unit = 'mm';
 
     public array $productcat = [];
-    
+
     // Product attributen
     public array $availableAttributes = [];
     public array $selectedAttributes = [];
-    
+
     // Product varianten
     public array $variants = [];
     public array $newVariant = [];
     public bool $showVariantForm = false;
+    
+    // Variant modal properties
+    public $variantTitle = '';
+    public $variantSku = '';
+    public $variantPrice = '';
+    public $variantActive = true;
+
+    // Categorieën
+    public array $selectedCategories = [];
+    public array $availableCategories = [];
+    public ?string $categorySearch = null;
+
+    // File uploads
+    public $files = [];
+    public array $existingUploads = [];
 
     #[Locked]
     public ?string $redirect_url = null;
@@ -145,14 +167,14 @@ trait ProductTrait
     {
         // Laad alle beschikbare attributen
         $this->availableAttributes = \Darvis\MantaProduct\Models\Attribute::orderBy('sort')->get()->toArray();
-        
+
         // Laad geselecteerde attributen voor dit product
         if ($this->item) {
             $productAttributes = \Darvis\MantaProduct\Models\ProductAttribute::where('product_id', $this->item->id)
                 ->with('attribute')
                 ->orderBy('sort')
                 ->get();
-                
+
             foreach ($productAttributes as $productAttribute) {
                 $this->selectedAttributes[$productAttribute->attribute_id] = [
                     'is_required' => $productAttribute->is_required,
@@ -209,6 +231,110 @@ trait ProductTrait
                 ->get()
                 ->toArray();
         }
+    }
+
+    public function loadCategories()
+    {
+        // Laad alle beschikbare categorieën met optionele zoekfilter
+        $query = \Darvis\MantaProduct\Models\Category::with('parent')
+            ->orderBy('sort');
+
+        // Filter op zoekterm indien aanwezig
+        if ($this->categorySearch) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%' . $this->categorySearch . '%')
+                    ->orWhere('description', 'like', '%' . $this->categorySearch . '%');
+            });
+        }
+
+        $this->availableCategories = $query->get()->toArray();
+
+        // Laad geselecteerde categorieën voor dit product
+        if ($this->item) {
+            $this->selectedCategories = $this->item->categories()->pluck('manta_categories.id')->toArray();
+        }
+    }
+
+    public function updatedCategorySearch()
+    {
+        $this->loadCategories();
+    }
+
+    public function toggleCategory($categoryId)
+    {
+        if (in_array($categoryId, $this->selectedCategories)) {
+            $this->selectedCategories = array_values(array_diff($this->selectedCategories, [$categoryId]));
+        } else {
+            $this->selectedCategories[] = $categoryId;
+        }
+    }
+
+    public function saveCategories()
+    {
+        if (!$this->item) {
+            return;
+        }
+
+        // Sync de categorieën met het product
+        $this->item->categories()->sync($this->selectedCategories);
+    }
+
+    public function getCategoryBreadcrumb($category)
+    {
+        $breadcrumb = [];
+        $current = $category;
+
+        while ($current) {
+            array_unshift($breadcrumb, $current['name']);
+            $current = $current['parent'] ?? null;
+        }
+
+        return implode(' > ', $breadcrumb);
+    }
+
+    public function loadUploads()
+    {
+        if ($this->item) {
+            $this->existingUploads = $this->item->uploads()->orderBy('sort', 'ASC')->get()->toArray();
+        }
+    }
+
+    public function removeUpload($uploadId)
+    {
+        $upload = \Manta\FluxCMS\Models\Upload::find($uploadId);
+        if ($upload) {
+            $upload->delete();
+            $this->loadUploads();
+            Flux::toast('Bestand verwijderd', variant: 'success');
+        }
+    }
+
+    public function saveUploads()
+    {
+
+
+        if (!$this->item || empty($this->files)) {
+            return;
+        }
+
+        $uploadModel = new \Manta\FluxCMS\Models\Upload();
+
+        foreach ($this->files as $file) {
+
+            $uploadModel->upload(
+                $file,
+                'Darvis\MantaProduct\Models\Product',
+                $this->item->id,
+                [
+                    'disk' => config('manta-cms.media.disk', 'public'),
+                    'location' => 'uploads/' . env('THEME', 'default') . '/products/' . date('Y') . '/' . date('m') . '/',
+                ]
+            );
+        }
+
+        $this->files = [];
+        $this->loadUploads();
+        Flux::toast('Bestanden geüpload', variant: 'success');
     }
 
     public function initNewVariant()
@@ -313,7 +439,7 @@ trait ProductTrait
         foreach ($variantValues as $attributeId => $valueId) {
             $keys[] = $attributeId . ':' . $valueId;
         }
-        
+
         return implode('|', $keys);
     }
 
@@ -375,5 +501,58 @@ trait ProductTrait
                 '1024x1024'
             );
         }
+    }
+
+    /**
+     * Reset variant form fields
+     */
+    public function resetVariantForm()
+    {
+        $this->variantTitle = '';
+        $this->variantSku = '';
+        $this->variantPrice = '';
+        $this->variantActive = true;
+    }
+
+    /**
+     * Save new variant
+     */
+    public function saveVariant()
+    {
+        $this->validate([
+            'variantTitle' => 'required|string|max:255',
+            'variantSku' => 'required|string|max:255|unique:manta_product_variants,sku',
+            'variantPrice' => 'required|numeric|min:0',
+        ], [
+            'variantTitle.required' => 'Titel is verplicht',
+            'variantSku.required' => 'SKU is verplicht',
+            'variantSku.unique' => 'Deze SKU bestaat al',
+            'variantPrice.required' => 'Prijs is verplicht',
+            'variantPrice.numeric' => 'Prijs moet een geldig bedrag zijn',
+        ]);
+
+        // Check if we have a product (for create vs update)
+        if (!$this->item) {
+            \Flux\Flux::toast('Sla eerst het product op voordat je varianten toevoegt', duration: 3000, variant: 'warning');
+            return;
+        }
+
+        // Create new variant
+        $variant = $this->item->variants()->create([
+            'title' => $this->variantTitle,
+            'sku' => $this->variantSku,
+            'price_override_excl' => $this->variantPrice,
+            'active' => $this->variantActive,
+        ]);
+
+        // Reload variants
+        $this->loadVariants();
+
+        // Reset form and show success message
+        $this->resetVariantForm();
+        \Flux\Flux::toast('Variant toegevoegd', duration: 2000, variant: 'success');
+        
+        // Close modal via JavaScript
+        $this->dispatch('close-modal', 'add-variant');
     }
 }

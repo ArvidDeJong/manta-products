@@ -31,7 +31,9 @@ class ProductList extends Component
     {
         $this->trashed = count(Product::whereNull('pid')->onlyTrashed()->get());
 
-        $obj = Product::whereNull('pid');
+        $obj = Product::with(['categories', 'variants' => function($query) {
+            $query->orderBy('price_override_excl', 'asc');
+        }])->whereNull('pid');
         if ($this->tablistShow == 'trashed') {
             $obj->onlyTrashed();
         }
