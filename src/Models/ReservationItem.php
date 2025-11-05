@@ -1,14 +1,17 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReservationItem extends Model
 {
     use HasFactory;
-    protected $table = 'reservation_items';
+    use SoftDeletes;
+
+    protected $table = 'manta_reservation_items';
 
     protected $fillable = [
         'blocks',
@@ -46,12 +49,12 @@ class ReservationItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    
+    }
 
-    protected static function newFactory()
+    public static function newFactory()
     {
-        return \Manta\Products\Database\Factories\ReservationItemFactory::new();
-    
+        return \Darvis\MantaProduct\Database\Factories\ReservationItemFactory::new();
+    }
 
     public function productVariant()
     {

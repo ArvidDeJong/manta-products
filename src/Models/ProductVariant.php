@@ -1,17 +1,19 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Manta\Products\Traits\HasDimensions;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Darvis\MantaProduct\Traits\HasDimensions;
 
 class ProductVariant extends Model
 {
     use HasFactory;
     use HasDimensions;
+    use SoftDeletes;
 
-    protected $table = 'product_variants';
+    protected $table = 'manta_product_variants';
 
     protected $fillable = [
         'active',
@@ -38,7 +40,7 @@ class ProductVariant extends Model
         'active'             => 'bool',
         'capacity'           => 'int',
         'meta'               => 'array',
-        'price_override_excl'=> 'decimal:2',
+        'price_override_excl' => 'decimal:2',
         'stock_qty'          => 'int',
         'tax_rate'           => 'decimal:2',
         'wastage_pct'        => 'decimal:2',
@@ -51,7 +53,7 @@ class ProductVariant extends Model
 
     public function values()
     {
-        return $this->hasMany(ProductVariantValue::class)->with(['attribute','attributeValue']);
+        return $this->hasMany(ProductVariantValue::class)->with(['attribute', 'attributeValue']);
     }
 
     public function effectiveUnitPriceExcl(): float
@@ -61,11 +63,11 @@ class ProductVariant extends Model
 
     public function effectiveTaxRate(): float
     {
-        return (float) ($this->tax_rate ?? $this->product->tax_rate ?? config('manta-products.default_tax_rate', 21.00));
-    
+        return (float) ($this->tax_rate ?? $this->product->tax_rate ?? config('manta-product.default_tax_rate', 21.00));
+    }
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\ProductVariantFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\ProductVariantFactory::new();
     }
 }

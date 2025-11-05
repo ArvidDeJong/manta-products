@@ -1,30 +1,35 @@
 {
-  "name": "darvis/manta-products",
-  "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Compatible with reservations.",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Arvid de Jong",
-      "email": "info@arvid.nl"
+    "name": "darvis/manta-product",
+    "description": "Products, attributes & variants with unit pricing (meter/m2/m3) for Laravel. Includes gift cards, shopping cart, and reservation compatibility.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arvid de Jong",
+            "email": "info@arvid.nl"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Darvis\\MantaProduct\\": "src/",
+            "Darvis\\MantaProduct\\Database\\Factories\\": "database/factories/",
+            "Darvis\\MantaProduct\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Darvis\\MantaProduct\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "orchestra/testbench": "^10.6"
     }
-  ],
-  "require": {
-    "php": "^8.2",
-    "illuminate/support": "^12.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Manta\\Products\\": "src/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Manta\\Products\\ServiceProvider"
-      ]
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true
 }

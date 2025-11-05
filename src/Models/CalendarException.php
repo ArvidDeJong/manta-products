@@ -1,14 +1,17 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CalendarException extends Model
 {
     use HasFactory;
-    protected $table = 'calendar_exceptions';
+    use SoftDeletes;
+
+    protected $table = 'manta_calendar_exceptions';
 
     protected $fillable = [
         'date',
@@ -28,10 +31,10 @@ class CalendarException extends Model
     public function owner()
     {
         return $this->morphTo();
-    
+    }
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\CalendarExceptionFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\CalendarExceptionFactory::new();
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class ProductAttribute extends Model
 {
-    protected $table = 'product_attributes';
+    protected $table = 'manta_product_attributes';
     public $timestamps = false;
 
     protected $fillable = [
@@ -20,4 +20,14 @@ class ProductAttribute extends Model
         'is_required' => 'bool',
         'sort'        => 'int',
     ];
+
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

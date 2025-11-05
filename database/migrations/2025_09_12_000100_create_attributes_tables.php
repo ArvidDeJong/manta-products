@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('manta_attributes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('code')->unique(); // e.g. color, size
@@ -15,35 +15,33 @@ return new class extends Migration {
             $table->json('config')->nullable();
             $table->smallInteger('sort')->default(0);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
         });
 
-        Schema::create('attribute_values', function (Blueprint $table) {
+        Schema::create('manta_attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete();
+            $table->foreignId('attribute_id')->constrained('manta_attributes')->cascadeOnDelete();
             $table->string('value');           // e.g. Rood
             $table->string('code');            // e.g. red
             $table->string('hex')->nullable(); // #ff0000 for color
             $table->smallInteger('sort')->default(0);
             $table->timestamps();
-
-            $table->unique(['attribute_id','code']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->unique(['attribute_id', 'code']);
         });
 
-        Schema::create('product_attributes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete();
-            $table->boolean('is_required')->default(true);
-            $table->smallInteger('sort')->default(0);
-
-            $table->unique(['product_id','attribute_id']);
-        });
+        // manta_product_attributes table will be created in a separate migration after products table
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('product_attributes');
-        Schema::dropIfExists('attribute_values');
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('manta_attribute_values');
+        Schema::dropIfExists('manta_attributes');
     }
 };

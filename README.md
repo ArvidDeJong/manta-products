@@ -1,54 +1,113 @@
-# darvis/manta-products
+# Manta Products
 
-Products, attributes & variants with unit pricing (meter/m²/m³) for Laravel 11.  
-Also works great alongside reservations (rooms/slots) but does not depend on a reservation package.
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/darvis/manta-product.svg?style=flat-square)](https://packagist.org/packages/darvis/manta-product)
+[![Total Downloads](https://img.shields.io/packagist/dt/darvis/manta-product.svg?style=flat-square)](https://packagist.org/packages/darvis/manta-product)
+[![PHP Version Require](https://img.shields.io/packagist/php-v/darvis/manta-product?style=flat-square)](https://packagist.org/packages/darvis/manta-product)
+[![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red.svg?style=flat-square)](https://laravel.com)
+[![License](https://img.shields.io/packagist/l/darvis/manta-product.svg?style=flat-square)](https://packagist.org/packages/darvis/manta-product)
 
-- ✅ **Products** with dimensions (mm) and unit pricing (piece/meter/m²/m³)  
-- ✅ **Attributes & Values** (e.g. Color, Size)  
-- ✅ **Product Variants** with per-variant price/stock/capacity/dimensions overrides  
-- ✅ **Variant Matrix Generator** (cartesian builder)  
-- ✅ Zero routes; pure Eloquent package with migrations & config
+A powerful Laravel package for managing products, attributes and variants with advanced unit pricing (meter/m²/m³). Perfect for e-commerce and reservation systems.
 
-> Opinionated: integers for dimensions (mm), alphabetically sorted keys in arrays, clean comments.
+## ✨ Features
+
+- 🏷️ **Products** with dimensions (mm) and unit pricing (piece/meter/m²/m³)  
+- 🎨 **Attributes & Values** (e.g. Color, Size, Material)  
+- 🔄 **Product Variants** with per-variant price/stock/capacity/dimension overrides  
+- 🧮 **Variant Matrix Generator** (cartesian product builder)  
+- 🎁 **Gift Cards** with balance tracking and redemption system
+- 🛒 **Shopping Cart** with product and gift card support
+- 📅 **Reservations & Availability** (optional)
+- 🚀 **Zero routes** - pure Eloquent package with migrations & config
+- 🧪 **Laravel 12 compatible** with PHP 8.2+
+
+> **Opinionated design**: Integers for dimensions (mm), alphabetically sorted keys, clean code comments.
+
+## 📋 Table of Contents
+
+- [Installation](#-installation)
+- [Configuration](#-configuration)  
+- [Quick Start](#-quick-start)
+- [Documentation](#-documentation)
+- [Demo](#-demo)
+- [Extending](#-extending)
+- [Testing](#-testing)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
-## Installation
+## 🚀 Installation
 
 ```bash
-composer require darvis/manta-products
-php artisan vendor:publish --tag=manta-products-config
+composer require darvis/manta-product
+php artisan vendor:publish --tag=manta-product-config
 php artisan migrate
 ```
 
 Laravel will auto-discover the service provider.
 
----
+## ⚙️ Configuration
 
-## Configuration
+See `config/manta-product.php` for all options like tax rate, rounding mode and SKU pattern.
 
-`config/manta-products.php`
+[📖 Full configuration documentation](docs/02-configuration.md)
 
-- `default_tax_rate` — Used if neither product nor variant has a tax rate.  
-- `currency` — Display currency code (not enforced in DB).  
-- `sku_pattern` — Pattern for generated SKUs. Tokens: `{'}}product_id{{'}, {'}}codes{{'}, {'}}values{{'}`.  
-- `default_rounding_mode` — `ceil|floor|round` for unit calculations.  
-- `default_unit_step` — Minimal step size when not set on product/variant.
+## ⚡ Quick Start
 
----
+```php
+use Manta\Products\Models\Product;
+use Manta\Products\Models\Attribute;
+use Manta\Products\Services\VariantMatrixService;
 
-## Database Overview
+// 1. Create a product
+$product = Product::create([
+    'title' => 'Aluminum Profile',
+    'unit_type' => 'meter',
+    'price_per_unit' => 14.95,
+    'calc_mode' => 'direct_length',
+]);
 
-- `products` — base product including unit pricing and dimensions (mm).  
-- `attributes`, `attribute_values` — define properties like Color/Size.  
-- `product_attributes` — pivot assigning attributes to a product.  
-- `product_variants`, `product_variant_values` — variant matrix + values.
+// 2. Add attributes
+$color = Attribute::create(['name' => 'Color', 'code' => 'color']);
+$product->attributes()->attach($color->id);
+
+// 3. Generate variants
+$service = new VariantMatrixService();
+$service->generate($product, ['color' => ['red', 'blue']]);
+
+// 4. Calculate pricing
+$pricing = $product->priceForUnits(['length_mm' => 2500]); // 2.5m
+echo "Price: €{$pricing['price_incl']}";
+```
+
+## 📚 Documentation
+
+- [📦 Installation](docs/01-installation.md)
+- [⚙️ Configuration](docs/02-configuration.md)  
+- [🏗️ Models](docs/03-models.md)
+- [💡 Usage](docs/04-usage.md)
+- [🔄 Variants](docs/05-variants.md)
+- [💰 Unit Pricing](docs/06-unit-pricing.md)
+- [🔧 Extending](docs/07-extending.md)
+- [📅 Reservations](docs/08-reservations.md)
+- [📊 Availability](docs/09-availability.md)
+- [🔧 Troubleshooting](docs/10-troubleshooting.md)
+- [🎁 Gift Cards](docs/11-giftcards.md)
+
+## 🗄️ Database Overview
+
+- `products` — Base product with unit pricing and dimensions (mm)
+- `attributes`, `attribute_values` — Properties like Color/Size  
+- `product_attributes` — Pivot table for product ↔ attribute linking
+- `product_variants`, `product_variant_values` — Variant matrix + values
+- `manta_gift_cards` — Digital gift cards with balance tracking
+- `manta_carts`, `manta_cart_items` — Shopping cart functionality
 
 _This package does not include orders or reservations — keep those in your app._
 
 ---
 
-## Models & Helpers
+## 🏗️ Models & Helpers
 
 ### Product
 ```php
@@ -133,19 +192,39 @@ $variant->update([
 - Add media tables to link images per product/variant.
 - Create observers or policies as needed; package keeps concerns minimal.
 
----
+## 🧪 Testing
 
-## Testing
+The package includes basic test setup. Recommended tests:
 
-Package ships without tests for brevity. Recommended:
+```bash
+# Run tests (when available)
+composer test
+
+# Run static analysis
+composer analyse
+```
+
+Recommended test coverage:
 - Model factories for Product/Attribute/Variant
-- Unit tests for `VariantMatrixService` and unit calc helpers
+- Unit tests for `VariantMatrixService` 
+- Unit calc helpers testing
+- Integration tests for pricing
 
----
+## 🤝 Contributing
 
-## License
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-MIT
+- 🐛 **Bug reports**: Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md)
+- ✨ **Feature requests**: Use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md)  
+- 🔧 **Pull requests**: Follow the [PR template](.github/pull_request_template.md)
+
+## 🔒 Security
+
+For security issues, see [SECURITY.md](SECURITY.md) for responsible disclosure.
+
+## 📄 License
+
+This package is open source software licensed under the [MIT license](LICENSE).
 
 
 ---
@@ -172,12 +251,12 @@ Use `Manta\Products\Services\AvailabilityService` to compute used quantity (rese
 Enable demo screens and routes:
 
 ```php
-// config/manta-products.php
+// config/manta-product.php
 'enable_demo' => true,
-'demo_prefix' => 'manta-products-demo',
+'demo_prefix' => 'manta-product-demo',
 ```
 
-Then visit `/manta-products-demo` to see:
+Then visit `/manta-product-demo` to see:
 - Product list
 - 7-day slot generator based on opening hours & exceptions
 

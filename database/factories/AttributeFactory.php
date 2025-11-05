@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\Attribute;
+use Darvis\MantaProduct\Models\Attribute;
 
 class AttributeFactory extends Factory
 {
@@ -11,7 +11,7 @@ class AttributeFactory extends Factory
 
     public function definition()
     {
-        $name = $this->faker->unique()->randomElement(['Kleur','Maat','Materiaal','Uitvoering']);
+        $name = $this->faker->unique()->randomElement(['Kleur', 'Maat', 'Materiaal', 'Uitvoering']);
         return [
             'name' => $name,
             'code' => strtolower($name),

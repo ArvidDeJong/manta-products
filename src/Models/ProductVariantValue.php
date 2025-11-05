@@ -1,12 +1,12 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class ProductVariantValue extends Model
 {
-    protected $table = 'product_variant_values';
+    protected $table = 'manta_product_variant_values';
 
     protected $fillable = [
         'attribute_id',

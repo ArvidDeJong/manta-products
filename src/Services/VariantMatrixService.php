@@ -1,13 +1,13 @@
 <?php
 
-namespace Manta\Products\Services;
+namespace Darvis\MantaProduct\Services;
 
 use Illuminate\Support\Str;
-use Manta\Products\Models\Attribute;
-use Manta\Products\Models\AttributeValue;
-use Manta\Products\Models\Product;
-use Manta\Products\Models\ProductVariant;
-use Manta\Products\Models\ProductVariantValue;
+use Darvis\MantaProduct\Models\Attribute;
+use Darvis\MantaProduct\Models\AttributeValue;
+use Darvis\MantaProduct\Models\Product;
+use Darvis\MantaProduct\Models\ProductVariant;
+use Darvis\MantaProduct\Models\ProductVariantValue;
 
 class VariantMatrixService
 {
@@ -26,9 +26,9 @@ class VariantMatrixService
             $codes = implode('-', array_keys($combo));
             $values = implode('-', array_values($combo));
 
-            $pattern = config('manta-products.sku_pattern', '{product_id}-{codes}-{values}');
+            $pattern = config('manta-product.sku_pattern', '{product_id}-{codes}-{values}');
             $sku = strtoupper(str_replace(
-                ['{product_id}','{codes}','{values}'],
+                ['{product_id}', '{codes}', '{values}'],
                 [$product->id, $codes, $values],
                 $pattern
             ));
@@ -74,6 +74,6 @@ class VariantMatrixService
     public function variantKey(array $combo): string
     {
         ksort($combo);
-        return collect($combo)->map(fn($v, $k) => $k . ':' . $v).join('|');
+        return collect($combo)->map(fn($v, $k) => $k . ':' . $v) . join('|');
     }
 }

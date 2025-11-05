@@ -1,14 +1,17 @@
 <?php
 
-namespace Manta\Products\Models;
+namespace Darvis\MantaProduct\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Hold extends Model
 {
     use HasFactory;
-    protected $table = 'holds';
+    use SoftDeletes;
+
+    protected $table = 'manta_holds';
 
     protected $fillable = [
         'ends_at',
@@ -29,6 +32,6 @@ class Hold extends Model
 
     protected static function newFactory()
     {
-        return \Manta\Products\Database\Factories\HoldFactory::new();
+        return \Darvis\MantaProduct\Database\Factories\HoldFactory::new();
     }
 }

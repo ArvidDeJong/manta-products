@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('price_rules', function (Blueprint $table) {
+        Schema::create('manta_price_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('manta_products')->cascadeOnDelete();
             $table->string('name');
             $table->string('rule_type'); // per_piece|per_person|per_period|per_hour|per_day
             $table->decimal('amount', 12, 2);
@@ -25,13 +25,16 @@ return new class extends Migration {
             $table->timestamp('valid_from')->nullable();
             $table->timestamp('valid_until')->nullable();
             $table->timestamps();
-
-            $table->index(['product_id','priority']);
+            $table->softDeletes();
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->index(['product_id', 'priority']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('price_rules');
+        Schema::dropIfExists('manta_price_rules');
     }
 };

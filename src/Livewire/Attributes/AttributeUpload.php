@@ -1,0 +1,32 @@
+<?php
+
+namespace Darvis\MantaProduct\Livewire\Attributes;
+
+use Darvis\MantaProduct\Models\Attribute;
+use Darvis\MantaProduct\Traits\AttributeTrait;
+use Livewire\Component;
+use Manta\FluxCMS\Traits\MantaTrait;
+use Livewire\Attributes\Layout;
+
+#[Layout('manta-cms::layouts.app')]
+class AttributeUpload extends Component
+{
+    use MantaTrait, AttributeTrait;
+
+    public function mount(Attribute $attribute)
+    {
+        $this->item = $attribute;
+        $this->itemOrg = $attribute;
+        $this->id = $attribute->id;
+        $this->locale = $attribute->locale;
+
+        $this->getLocaleInfo();
+        $this->getBreadcrumb('upload');
+        $this->getTablist();
+    }
+
+    public function render()
+    {
+        return view('manta-cms::livewire.default.manta-default-upload');
+    }
+}

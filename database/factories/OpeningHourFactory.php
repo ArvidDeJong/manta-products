@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\OpeningHour;
+use Darvis\MantaProduct\Models\OpeningHour;
 
 class OpeningHourFactory extends Factory
 {
@@ -13,7 +13,7 @@ class OpeningHourFactory extends Factory
     {
         return [
             'owner_type' => 'products',
-            'weekday'    => $this->faker->numberBetween(1,7),
+            'weekday'    => $this->faker->numberBetween(1, 7),
             'start_time' => '09:00:00',
             'end_time'   => '17:00:00',
         ];

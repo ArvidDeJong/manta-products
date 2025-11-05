@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\Reservation;
+use Darvis\MantaProduct\Models\Reservation;
 use Illuminate\Support\Str;
 
 class ReservationFactory extends Factory

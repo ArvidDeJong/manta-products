@@ -1,9 +1,9 @@
 <?php
 
-namespace Manta\Products\Database\Factories;
+namespace Darvis\MantaProduct\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Manta\Products\Models\Hold;
+use Darvis\MantaProduct\Models\Hold;
 use Illuminate\Support\Str;
 
 class HoldFactory extends Factory
